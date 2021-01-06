@@ -49,6 +49,6 @@ export default class CreateTransaction1609968970823
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable('appointments');
+        await queryRunner.dropTable('transactions');
     }
 }
