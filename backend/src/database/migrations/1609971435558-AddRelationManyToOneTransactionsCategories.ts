@@ -31,16 +31,8 @@ export default class AddRelationManyToOneTransactionsCategories1609971435558
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropForeignKey('appointments', 'AppointmentProvider');
+        await queryRunner.dropForeignKey('transactions', 'TransactionCategory');
 
-        await queryRunner.dropColumn('appointments', 'provider_id');
-
-        await queryRunner.addColumn(
-            'appointments',
-            new TableColumn({
-                name: 'prodider',
-                type: 'varchar',
-            }),
-        );
+        await queryRunner.dropColumn('transactions', 'category_id');
     }
 }
