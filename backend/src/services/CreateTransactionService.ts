@@ -1,9 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { getRepository } from 'typeorm';
+import { getCustomRepository, getRepository } from 'typeorm';
+
+import AppError from '../errors/AppError';
 import Category from '../models/Category';
-// import AppError from '../errors/AppError';
 
 import Transaction from '../models/Transaction';
+import TransactionsRepository from '../repositories/TransactionsRepository';
 
 interface Request {
     title: string;
@@ -18,7 +19,16 @@ class CreateTransactionService {
         type,
         category: categoryTitle,
     }: Request): Promise<Transaction> {
-        const transactionRepository = getRepository(Transaction);
+        const transactionRepository = getCustomRepository(
+            TransactionsRepository,
+        );
+
+        const { total } = await transactionRepository.getBalance();
+
+        if (type === 'outcome' && total < value) {
+            throw new AppError(`You don't have this value on your account.`);
+        }
+
         const categoryRepository = getRepository(Category);
 
         let category = await categoryRepository.findOne({
