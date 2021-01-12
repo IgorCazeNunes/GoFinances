@@ -41,6 +41,8 @@ const Import: React.FC = () => {
   }
 
   function submitFile(files: File[]): void {
+    if (files.length > 1) return;
+
     const uploadFiles: FileProps[] = files.map<FileProps>(file => ({
       file,
       name: file.name,
