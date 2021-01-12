@@ -8,7 +8,7 @@ import Transaction from '../models/Transaction';
 import TransactionsRepository from '../repositories/TransactionsRepository';
 
 interface Request {
-    fileName: string;
+    csvFilePath: string;
 }
 
 interface CSVTransaction {
@@ -19,14 +19,12 @@ interface CSVTransaction {
 }
 
 class ImportTransactionsService {
-    async execute({ fileName }: Request): Promise<Transaction[]> {
+    async execute({ csvFilePath }: Request): Promise<Transaction[]> {
         const transactionRepository = getCustomRepository(
             TransactionsRepository,
         );
 
         const categoriesRepository = getRepository(Category);
-
-        const csvFilePath = path.join(uploadConfig.directory, fileName);
 
         const readCSVStream = fs.createReadStream(csvFilePath);
 
@@ -54,6 +52,8 @@ class ImportTransactionsService {
         await new Promise(resolve => {
             parseCSV.on('end', resolve);
         });
+
+        await fs.promises.unlink(csvFilePath);
 
         const existentCategories = await categoriesRepository.find({
             where: {
